@@ -1,0 +1,32 @@
+{
+  "background": false,
+  "behavior": "application",
+  "version": "0.1",
+  "title": "Codebox",
+  "name": "Codebox",
+  "identifier": "com.koding.apps.codebox",
+  "path": "~/Applications/Codebox.kdapp",
+  "homepage": "rsonbie.kd.io/codebox",
+  "repository": "git://github.com/rsonbie/codebox.kdapp.git",
+  "description": "Codebox : a Koding application created with the blank template.",
+  "category": "web-app",
+  "source": {
+    "blocks": {
+      "app": {
+        "files": [
+          "./index.coffee"
+        ]
+      }
+    },
+    "stylesheets": [
+      "./resources/style.css"
+    ]
+  },
+  "options": {
+    "type": "tab"
+  },
+  "icns": {
+    "128": "./resources/icon.128.png"
+  },
+  "fileTypes": []
+}
