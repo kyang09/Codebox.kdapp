@@ -8,7 +8,7 @@
   "path": "~/Applications/Codebox.kdapp",
   "homepage": "rsonbie.kd.io/codebox",
   "repository": "git://github.com/rsonbie/codebox.kdapp.git",
-  "description": "Codebox : a Koding application created with the blank template.",
+  "description": "Installer for Codebox, a web-based IDE.",
   "category": "web-app",
   "source": {
     "blocks": {
