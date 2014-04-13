@@ -1,4 +1,4 @@
-/* Compiled by kdc on Sun Apr 13 2014 16:39:28 GMT+0000 (UTC) */
+/* Compiled by kdc on Sun Apr 13 2014 16:45:28 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
 /* BLOCK STARTS: /home/rsonbie/Applications/Codebox.kdapp/index.coffee */
@@ -116,7 +116,7 @@ CodeboxInstaller = (function(_super) {
       };
       _this.addSubView(_this.content = new KDCustomHTMLView({
         cssClass: "codebox-help",
-        partial: "  <p>Codebox is a complete and modular Cloud IDE. It can run on any unix-like machine (Linux, Mac OS X). It is an open source component of codebox.io (Cloud IDE as a Service).</p>\n  \n  <p>What makes Brackets different from other web code editors?</p>\n  \n  <p>The IDE can run on your desktop (Linux or Mac), on your server or the cloud. You can use the codebox.io service to host and manage IDE instances.</p>\n\n<p>Codebox is built with web technologies: node.js, javascript, html and less. The IDE possesses a very modular and extensible architecture, that allows you to build your own features with through add-ons. Codebox is the first open and modular IDE capable of running both on the Desktop and in the cloud (with offline support).</p>"
+        partial: "  <p>Codebox is a complete and modular Cloud IDE. It can run on any unix-like machine (Linux, Mac OS X). It is an open source component of codebox.io (Cloud IDE as a Service).</p>\n  \n  <p>The IDE can run on your desktop (Linux or Mac), on your server or the cloud. You can use the codebox.io service to host and manage IDE instances.</p>\n\n<p>Codebox is built with web technologies: node.js, javascript, html and less. The IDE possesses a very modular and extensible architecture, that allows you to build your own features with through add-ons. Codebox is the first open and modular IDE capable of running both on the Desktop and in the cloud (with offline support).</p>"
       }));
       _this.addSubView(_this.uninstall = new KDButtonView({
         title: "Uninstall",
