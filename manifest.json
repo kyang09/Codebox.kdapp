@@ -8,7 +8,7 @@
   "path": "~/Applications/Codebox.kdapp",
   "homepage": "rsonbie.kd.io/codebox",
   "repository": "git://github.com/rsonbie/codebox.kdapp.git",
-  "description": "Installer for Codebox, a web-based IDE.",
+  "description": "Installer for Codebox, a web-based IDE. You can use it on Koding through a port (default 9090)",
   "category": "web-app",
   "source": {
     "blocks": {
