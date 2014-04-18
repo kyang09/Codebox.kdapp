@@ -1,4 +1,4 @@
-/* Compiled by kdc on Sun Apr 13 2014 16:45:28 GMT+0000 (UTC) */
+/* Compiled by kdc on Fri Apr 18 2014 19:44:28 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
 /* BLOCK STARTS: /home/rsonbie/Applications/Codebox.kdapp/index.coffee */

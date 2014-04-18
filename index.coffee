@@ -56,7 +56,7 @@ class CodeboxInstaller extends KDView
         tagName       : 'img'
         cssClass      : 'logo'
         attributes    :
-          src         : "#{resource}/images/codebox.png"
+          src         : "https://www.codebox.io/static/images/icons/128.png"
 
       @watcher = new LogWatcher
 
