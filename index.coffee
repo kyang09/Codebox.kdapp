@@ -1,31 +1,23 @@
+domain     = "#{KD.nick()}.kd.io"
+OutPath    = "/tmp/_codeboxinstaller.out"
+modPath = "/usr/lib/node_modules/codebox"
+kdbPath    = "~/.koding-codebox"
+runner = 0
+resource = "https://rsonbie.kd.io/apps/codebox"
+
 class LogWatcher extends FSWatcher
 
   fileAdded:(change)->
     {name} = change.file
     [percentage, status] = name.split '-'
     @emit "UpdateProgress", percentage, status
-
-domain     = "#{KD.nick()}.kd.io"
-OutPath    = "/tmp/_codeboxinstaller.out"
-modPath = "/usr/lib/node_modules/codebox"
-kdbPath    = "~/.koding-codebox"
-runner = 0
-time = 0
-#counter = 0
-#resource   = "https://gist.githubusercontent.com/rsonbie456/608683919d7e4ac8e192/raw/214e05b39f3c9a5341d2646b716847bbb693a348/installer"
-resource = "https://rsonbie.kd.io/apps/codebox"
+    
 class CodeboxInstaller extends KDView
 
   constructor:->
     super cssClass: "codebox-installer"
 
   viewAppended:->
-  
-    @message = new KDNotificationView
-      title: "Let Codebox Load"
-      content: "If running Codebox lags, please wait. It might take a while to load dependencies. <br /> It should run after a little wait. <br /> Please click Show Details to see the progress."
-      duration: 0
-      type: "tray"
   
     KD.singletons.appManager.require 'Terminal', =>
 
@@ -72,7 +64,13 @@ class CodeboxInstaller extends KDView
         cssClass      : 'main-button solid'
         loader        : yes
         callback      : => @installCallback()
-        
+       
+       @addSubView @uninstall =  new KDButtonView
+          title         : "Uninstall"
+          cssClass      : 'uninstall-button solid'
+          disabled  : true
+          callback      : => @uninstallCallback()
+          
       @addSubView @link = new KDCustomHTMLView
         cssClass : 'hidden running-link'
         
@@ -83,18 +81,14 @@ class CodeboxInstaller extends KDView
       @addSubView @content = new KDCustomHTMLView
         cssClass : "codebox-help"
         partial  : """
+
+          <p><span class="descb"> NOTE : Let Codebox load if it takes a while. It should run after a little wait. Check the terminal on this app to see progress!</span></p>
           <p>Codebox is a complete and modular Cloud IDE. It can run on any unix-like machine (Linux, Mac OS X). It is an open source component of codebox.io (Cloud IDE as a Service).</p>
           
           <p>The IDE can run on your desktop (Linux or Mac), on your server or the cloud. You can use the codebox.io service to host and manage IDE instances.</p>
 
         <p>Codebox is built with web technologies: node.js, javascript, html and less. The IDE possesses a very modular and extensible architecture, that allows you to build your own features with through add-ons. Codebox is the first open and modular IDE capable of running both on the Desktop and in the cloud (with offline support).</p>
         """
-
-       @addSubView @uninstall =  new KDButtonView
-          title         : "Uninstall"
-          cssClass      : 'main-button solid'
-          disabled  : true
-          callback      : => @uninstallCallback()
         
       @checkState()
 
@@ -148,10 +142,12 @@ class CodeboxInstaller extends KDView
         title = "Run Codebox"
         style = 'green'
         @uninstall.enable()
+        document.getElementsByClassName("uninstall-button")[0].style.visibility = "visible"
         @button.setCallback => @runCallback()
       when 'install'
         title = "Install Codebox"
-        style = ''
+        style = ' '
+        document.getElementsByClassName("uninstall-button")[0].style.visibility = "hidden"
         @button.setCallback => @installCallback()
       when 'stop'
         title = "Stop Codebox"
@@ -162,30 +158,11 @@ class CodeboxInstaller extends KDView
     @button.setClass style
     @button.setTitle title or "Run Codebox"
     @button.hideLoader()
-  """
-  checkSeconds:->
-    if counter >= 2 and counter <= 5
-      @message = new KDNotificationView
-        title : "Loading ..."
-        type: "tray"
-    else
-      @message = new KDNotificationView
-        title : "Please wait while dependencies load ..."
-        type: "tray"
-        
-    @addSubView @message
-    counter++
-    return
-    """
+
   stopCallback:->
     @_lastRequest = 'stop'
     vmc = KD.getSingleton 'vmController'
-    """
-    @terminal.runCommand "PID=$!"
-    @terminal.runCommand "echo $PID"
-    @terminal.runCommand "sleep 2"
-    @terminal.runCommand "kill -s SIGINT $PID"
-    """
+
     vmc.run "pkill -f codebox"
     @terminal.runCommand "sleep 1"
     @terminal.runCommand "fuser -KILL -k -n tcp 9090"
@@ -193,34 +170,47 @@ class CodeboxInstaller extends KDView
     KD.utils.wait 3000, => @checkState()
 
   runCallback:->
-    """
-    time = setInterval  =>
-      @checkSeconds()
-    ,2500
-    """
     @_lastRequest = 'run'
-    #@session = (Math.random() + 1).toString(36).substring 7
     @runner = 1
-    #@link.setSession session
     @terminal.runCommand "codebox run ./myworkspace --open -p 9090"
     KD.utils.wait 3000, => @checkState()
-    
-  uninstallCallback:->
-    vmc = KD.getSingleton 'vmController'
-    #vmc.run "pkill -f codebox"
-    @terminal.runCommand "fuser -KILL -k -n tcp 9090"
-    @addSubView @msgUn = new KDNotificationView
-      title: "May need Sudo Password to Uninstall"
-      content: "You may need password for sudo to uninstall."
-      duration: 5000
-      type: "tray"
-    @terminal.runCommand "sudo npm uninstall -g codebox"
-    @uninstall.disable()
-    @link.hide()
-    @progress.updateBar 100, '%', "Codebox is not installed."
-    @switchState 'install'
-    KD.utils.wait 3000, => @checkState()
 
+   uninstallCallback:->
+    @terminal.setClass 'in'
+    @watcher.on 'UpdateProgress', (percentage, status)=>
+      @progress.updateBar percentage, '%', status
+      document.getElementsByClassName("bar")[0].style.background =  "#1AAF5D"
+      document.getElementsByClassName("bar")[0].childNodes[0].style.textShadow = "0 1px 0 rgba(0,0,0,.4)"
+      
+      if percentage is "99.99"
+       @toggle.setState 'Hide details'
+       @terminal.setClass 'in'
+       document.getElementsByClassName("bar")[0].style.background = "orange"
+       document.getElementsByClassName("bar")[0].childNodes[0].style.textShadow = "0 1px 5px black"   
+       setTimeout ( ->
+          document.getElementsByClassName("bar")[0].style.background = "#1AAF5D"
+          document.getElementsByClassName("bar")[0].childNodes[0].style.textShadow = "0 1px 5px black"
+        ), 5000
+      else if percentage is "0"
+        @button.hideLoader()
+        @toggle.setState 'Show details'
+        @terminal.unsetClass 'in'
+        @toggle.unsetClass 'toggle'
+        @switchState 'install'
+        @uninstall.disable()
+        KD.utils.wait 2500, => @progress.updateBar 100, '%', "Codebox is not installed."
+
+    session = (Math.random() + 1).toString(36).substring 7
+    @runner = 1
+    tmpOutPath = "#{OutPath}/#{session}"
+    vmc = KD.getSingleton 'vmController'
+    vmc.run "rm -rf #{OutPath}; mkdir -p #{tmpOutPath}", =>
+      @watcher.stopWatching()
+      @watcher.path = tmpOutPath
+      @watcher.watch()
+      @terminal.runCommand "curl --silent https://gist.githubusercontent.com/kyang09/c6708d2074f8e8ee6a26/raw/f713bd0a4fb49c87dc7e30d391cf9b88111bbccc/bashtojs | bash -s #{session}"
+  
+  
   installCallback:->
     @watcher.on 'UpdateProgress', (percentage, status)=>
       @progress.updateBar percentage, '%', status
@@ -232,13 +222,9 @@ class CodeboxInstaller extends KDView
         @terminal.unsetClass 'in'
         @toggle.unsetClass 'toggle'
         @switchState 'run'
-        """
-        @addSubView @uninstall1 =  new KDButtonView
-          title         : "Uninstall"
-          cssClass      : 'main-button solid'
-          callback      : => @uninstallCallback()
-      """
       else if percentage is "99.99"
+       @toggle.setState 'Hide details'
+       @terminal.setClass 'in'
        document.getElementsByClassName("bar")[0].style.background = "orange"
        document.getElementsByClassName("bar")[0].childNodes[0].style.textShadow = "0 1px 5px black"   
        setTimeout ( ->
@@ -246,7 +232,7 @@ class CodeboxInstaller extends KDView
           document.getElementsByClassName("bar")[0].childNodes[0].style.textShadow = "0 1px 5px black"
         ), 5000
       else if percentage is "0"
-        @toggle.setState 'Hide details'
+        @toggle.setState 'Show details'
         @terminal.setClass 'in'
         @toggle.setClass 'toggle'
         @terminal.webterm.setKeyView()
@@ -259,7 +245,7 @@ class CodeboxInstaller extends KDView
       @watcher.stopWatching()
       @watcher.path = tmpOutPath
       @watcher.watch()
-      @terminal.runCommand "curl --silent https://gist.githubusercontent.com/rsonbie456/608683919d7e4ac8e192/raw/da71eeda49a87b052dd39b0f9903ccd2727661a0/installer | bash -s #{session}"
+      @terminal.runCommand "curl --silent https://gist.githubusercontent.com/kyang09/b668d7088708857ae4c6/raw/f22b6826104464c61f3372f7c396fcc6069d652e/installer | bash -s #{session}"
   
   isCodeboxRunning:(callback)->
     vmc = KD.getSingleton 'vmController'

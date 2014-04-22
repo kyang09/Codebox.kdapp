@@ -46,7 +46,20 @@
   margin-left:-125px;
 }
 
+.codebox-installer .uninstall-button {
+  margin:15px;
+  left:50%;
+  width:auto;
+  padding: 0 10px 0 10px;
+  visibility: hidden;
+  margin-left:1px;
+}
+
 .codebox-installer .main-button.loading > .button-title {
+  visibility: hidden;
+}
+
+.codebox-installer .uninstall-button.loading > .button-title {
   visibility: hidden;
 }
 
@@ -108,4 +121,8 @@
   text-decoration:none;
   color: #1AAF5D;
   text-shadow:none;
+}
+
+.descb{
+font-weight:bold !important;
 }
