@@ -1,8 +1,8 @@
-/* Compiled by kdc on Tue Apr 22 2014 02:38:22 GMT+0000 (UTC) */
+/* Compiled by kdc on Tue Apr 22 2014 02:56:31 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
 /* BLOCK STARTS: /home/rsonbie/Applications/Codebox.kdapp/index.coffee */
-var CodeboxController, CodeboxInstaller, LogWatcher, OutPath, domain, interval, kdbPath, modPath, resource, runner, time, _ref,
+var CodeboxController, CodeboxInstaller, LogWatcher, OutPath, domain, kdbPath, modPath, resource, runner, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -15,10 +15,6 @@ modPath = "/usr/lib/node_modules/codebox";
 kdbPath = "~/.koding-codebox";
 
 runner = 0;
-
-time = 0;
-
-interval = 0;
 
 resource = "https://rsonbie.kd.io/apps/codebox";
 
@@ -214,14 +210,11 @@ CodeboxInstaller = (function(_super) {
     return this.button.hideLoader();
   };
 
-  "checkSeconds:->\n  if counter >= 2 and counter <= 5\n    @message = new KDNotificationView\n      title : \"Loading ...\"\n      type: \"tray\"\n  else\n    @message = new KDNotificationView\n      title : \"Please wait while dependencies load ...\"\n      type: \"tray\"\n      \n  @addSubView @message\n  counter++\n  return";
-
   CodeboxInstaller.prototype.stopCallback = function() {
     var vmc,
       _this = this;
     this._lastRequest = 'stop';
     vmc = KD.getSingleton('vmController');
-    "@terminal.runCommand \"PID=$!\"\n@terminal.runCommand \"echo $PID\"\n@terminal.runCommand \"sleep 2\"\n@terminal.runCommand \"kill -s SIGINT $PID\"";
     vmc.run("pkill -f codebox");
     this.terminal.runCommand("sleep 1");
     this.terminal.runCommand("fuser -KILL -k -n tcp 9090");
@@ -232,15 +225,13 @@ CodeboxInstaller = (function(_super) {
   };
 
   CodeboxInstaller.prototype.runCallback = function() {
-    "time = setInterval  =>\n  @checkSeconds()\n,2500";
     var _this = this;
     this._lastRequest = 'run';
     this.runner = 1;
     this.terminal.runCommand("codebox run ./myworkspace --open -p 9090");
-    KD.utils.wait(3000, function() {
+    return KD.utils.wait(3000, function() {
       return _this.checkState();
     });
-    return "checkUnin:->\n  divs = document.getElementsByTagName('div')\n  @switchState 'install'\n  if divs[i].innerHTML.indexOf(\"01110101011011100110100101101110\") != -1\n    @link.hide()\n    @progress.updateBar 100, '%', \"Codebox is not installed.\"\n    @switchState 'install'\n    @uninstall.disable()\n    @terminal.unsetClass 'in'\n  clearInterval(interval);  \nuninstallCallback:->\n   #@_lastRequest = 'install'\n    @_lastRequest = 'stop'\n    vmc = KD.getSingleton 'vmController'\n    #vmc.run \"pkill -f codebox\"\n    @terminal.setClass 'in'\n    #@terminal.runCommand \"fuser -KILL -k -n tcp 9090\"\n    @addSubView @msgUn = new KDNotificationView\n      title: \"May need Sudo Password to Uninstall\"\n      content: \"You may need password for sudo to uninstall.\"\n      duration: 3000\n      type: \"tray\"\n    session = (Math.random() + 1).toString(36).substring 7\n    @terminal.runCommand \"sudo npm uninstall -g codebox && curl --silent https://gist.githubusercontent.com/kyang09/c6708d2074f8e8ee6a26/raw/6ca1d8fb65ce5d7d74ca22faf55eace15bfa340f/bashtojs | bash -s " + session + "\"  #'sudo npm uninstall -g codebox && \n    \n    interval = setInterval =>\n      @checkUnin()\n    , 1000     \n    \n    KD.utils.wait 3000, => @checkState()";
   };
 
   CodeboxInstaller.prototype.uninstallCallback = function() {
@@ -296,8 +287,7 @@ CodeboxInstaller = (function(_super) {
         _this.toggle.setState('Show details');
         _this.terminal.unsetClass('in');
         _this.toggle.unsetClass('toggle');
-        _this.switchState('run');
-        return "@addSubView @uninstall1 =  new KDButtonView\n  title         : \"Uninstall\"\n  cssClass      : 'main-button solid'\n  callback      : => @uninstallCallback()";
+        return _this.switchState('run');
       } else if (percentage === "99.99") {
         _this.toggle.setState('Hide details');
         _this.terminal.setClass('in');
